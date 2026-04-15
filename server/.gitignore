@@ -6,6 +6,7 @@ dist/
 
 # Environment variables
 .env
+.env*
 
 # Prisma generated client (regenerated via prisma generate)
 node_modules/.prisma/

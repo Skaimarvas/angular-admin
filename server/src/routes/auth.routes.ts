@@ -1,5 +1,5 @@
-import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import { Request, Response, Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthRequest } from '../middleware/auth.middleware';
@@ -9,6 +9,7 @@ const router = Router();
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
   try {
+    
     const { email, password } = req.body;
     if (!email || !password) {
       res.status(400).json({ message: 'email and password are required' });
@@ -16,6 +17,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.isActive) {
+        
       res.status(401).json({ message: 'Invalid credentials' });
       return;
     }

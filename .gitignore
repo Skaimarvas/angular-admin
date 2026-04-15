@@ -45,6 +45,9 @@ Thumbs.db
 server/.env
 server/dist/
 
+# Environment files (frontend)
+src/environments/
+
 # Docker
 postgres_data/
 

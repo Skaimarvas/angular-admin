@@ -84,6 +84,7 @@
             type="email"
             placeholder="info@gmail.com"
             [value]="email"
+            (valueChange)="email = $event.toString()"
             name="email"
             class="form-input"
             required
@@ -97,6 +98,7 @@
               [type]="showPassword ? 'text' : 'password'"
               placeholder="Enter your password"
               [value]="password"
+              (valueChange)="password = $event.toString()"
               name="password"
               class="form-input"
               required
@@ -133,9 +135,14 @@
           className="w-full"
           size="sm"
           (btnClick)="onSignIn()"
+          [disabled]="isLoading"
         >
-          Sign in
+          {{ isLoading ? 'Signing in...' : 'Sign in' }}
         </app-button>
+
+        @if (errorMessage) {
+          <p class="text-sm text-center text-error-500">{{ errorMessage }}</p>
+        }
       </form>
 
       <div class="mt-5">
