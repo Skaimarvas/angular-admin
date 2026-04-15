@@ -1,6 +1,22 @@
 
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../../../environments/environment';
+
+type StockLevelRow = {
+  id: number;
+  quantity: number;
+  product?: {
+    name?: string;
+    category?: {
+      name?: string;
+    } | null;
+  };
+  warehouse?: {
+    name?: string;
+  };
+};
 
 @Component({
   selector: 'app-basic-table-five',
@@ -8,71 +24,40 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './basic-table-five.component.html',
   styles: ``
 })
-export class BasicTableFiveComponent {
-
-  tableData = [
-    {
-      id: 1,
-      name: 'TailGrids',
-      category: 'UI Kits',
-      country: '/images/country/country-01.svg',
-      cr: 'Dashboard',
-      value: '12,499',
-    },
-    {
-      id: 2,
-      name: 'GrayGrids',
-      category: 'Templates',
-      country: '/images/country/country-02.svg',
-      cr: 'Dashboard',
-      value: '5498',
-    },
-    {
-      id: 3,
-      name: 'Uideck',
-      category: 'Templates',
-      country: '/images/country/country-03.svg',
-      cr: 'Dashboard',
-      value: '4621',
-    },
-    {
-      id: 4,
-      name: 'FormBold',
-      category: 'SaaS',
-      country: '/images/country/country-04.svg',
-      cr: 'Dashboard',
-      value: '13843',
-    },
-    {
-      id: 5,
-      name: 'NextAdmin',
-      category: 'Templates',
-      country: '/images/country/country-05.svg',
-      cr: 'Dashboard',
-      value: '7523',
-    },
-    {
-      id: 6,
-      name: 'Form Builder',
-      category: 'Templates',
-      country: '/images/country/country-06.svg',
-      cr: 'Dashboard',
-      value: '1,377',
-    },
-    {
-      id: 7,
-      name: 'AyroUI',
-      category: 'Templates',
-      country: '/images/country/country-07.svg',
-      cr: 'Dashboard',
-      value: '599,00',
-    },
-  ];
+export class BasicTableFiveComponent implements OnInit {
+  tableData: Array<{
+    id: number;
+    name: string;
+    category: string;
+    country: string;
+    cr: string;
+    value: string;
+  }> = [];
 
   currentPage = 1;
   readonly defaultItemsPerPage = 7;
   itemsPerPage = this.defaultItemsPerPage;
   pageSizeOptions = [7, 14, 21];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http
+      .get<StockLevelRow[]>(`${environment.apiUrl}/stock-levels`)
+      .subscribe({
+        next: (rows) => {
+          this.tableData = rows.map((row, index) => ({
+            id: row.id,
+            name: row.product?.name ?? 'Unknown Product',
+            category: row.product?.category?.name ?? 'Uncategorized',
+            country: `/images/country/country-0${(index % 7) + 1}.svg`,
+            cr: row.warehouse?.name ?? 'N/A',
+            value: String(row.quantity ?? 0),
+          }));
+          this.currentPage = 1;
+        },
+      });
+  }
 
   get totalPages(): number {
     return Math.ceil(this.tableData.length / this.itemsPerPage);

@@ -1,9 +1,28 @@
 
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { BadgeComponent } from '../../../ui/badge/badge.component';
 import { AvatarTextComponent } from '../../../ui/avatar/avatar-text.component';
 import { CheckboxComponent } from '../../../form/input/checkbox.component';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../../../environments/environment';
+
+type SaleRow = {
+  id: number;
+  saleNumber?: string;
+  saleDate?: string;
+  total?: number;
+  status?: string;
+  customer?: {
+    name?: string;
+    email?: string;
+  } | null;
+  items?: Array<{
+    product?: {
+      name?: string;
+    } | null;
+  }>;
+};
 
 @Component({
   selector: 'app-basic-table-two',
@@ -16,50 +35,15 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './basic-table-two.component.html',
   styles: ``
 })
-export class BasicTableTwoComponent {
-
-  tableRowData = [
-    {
-      id: 'DE124321',
-      user: { initials: 'AB', name: 'John Doe', email: 'johndoe@gmail.com' },
-      avatarColor: 'brand',
-      product: { name: 'Software License', price: '$18,50.34', purchaseDate: '2024-06-15' },
-      status: { type: 'Complete' },
-      actions: { delete: true },
-    },
-    {
-      id: 'DE124322',
-      user: { initials: 'CD', name: 'Jane Smith', email: 'janesmith@gmail.com' },
-      avatarColor: 'brand',
-      product: { name: 'Cloud Hosting', price: '$12,99.00', purchaseDate: '2024-06-18' },
-      status: { type: 'Pending' },
-      actions: { delete: true },
-    },
-    {
-      id: 'DE124323',
-      user: { initials: 'EF', name: 'Michael Brown', email: 'michaelbrown@gmail.com' },
-      avatarColor: 'brand',
-      product: { name: 'Web Domain', price: '$9,50.00', purchaseDate: '2024-06-20' },
-      status: { type: 'Cancel' },
-      actions: { delete: true },
-    },
-    {
-      id: 'DE124324',
-      user: { initials: 'GH', name: 'Alice Johnson', email: 'alicejohnson@gmail.com' },
-      avatarColor: 'brand',
-      product: { name: 'SSL Certificate', price: '$2,30.45', purchaseDate: '2024-06-25' },
-      status: { type: 'Pending' },
-      actions: { delete: true },
-    },
-    {
-      id: 'DE124325',
-      user: { initials: 'IJ', name: 'Robert Lee', email: 'robertlee@gmail.com' },
-      avatarColor: 'brand',
-      product: { name: 'Premium Support', price: '$15,20.00', purchaseDate: '2024-06-30' },
-      status: { type: 'Complete' },
-      actions: { delete: true },
-    },
-  ];
+export class BasicTableTwoComponent implements OnInit {
+  tableRowData: Array<{
+    id: string;
+    user: { initials: string; name: string; email: string };
+    avatarColor: string;
+    product: { name: string; price: string; purchaseDate: string };
+    status: { type: string };
+    actions: { delete: boolean };
+  }> = [];
 
   selectedRows: string[] = [];
   selectAll: boolean = false;
@@ -67,6 +51,51 @@ export class BasicTableTwoComponent {
   readonly defaultItemsPerPage = 5;
   itemsPerPage = this.defaultItemsPerPage;
   pageSizeOptions = [5, 10, 15];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http
+      .get<SaleRow[]>(`${environment.apiUrl}/sales`)
+      .subscribe({
+        next: (rows) => {
+          this.tableRowData = rows.map((row) => {
+            const mappedStatus =
+              row.status === 'CONFIRMED' || row.status === 'COMPLETED'
+                ? 'Complete'
+                : row.status === 'CANCELLED' || row.status === 'REJECTED'
+                ? 'Cancel'
+                : 'Pending';
+
+            return {
+              id: row.saleNumber || `SALE-${row.id}`,
+              user: {
+                initials: (row.customer?.name || 'Walk In')
+                  .split(' ')
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((part) => part[0])
+                  .join('')
+                  .toUpperCase(),
+                name: row.customer?.name || 'Walk-in Customer',
+                email: row.customer?.email || '-',
+              },
+              avatarColor: 'brand',
+              product: {
+                name: row.items?.[0]?.product?.name || `${row.items?.length ?? 0} items`,
+                price: `$${(row.total ?? 0).toFixed(2)}`,
+                purchaseDate: row.saleDate ? row.saleDate.slice(0, 10) : '-',
+              },
+              status: { type: mappedStatus },
+              actions: { delete: true },
+            };
+          });
+          this.currentPage = 1;
+          this.selectedRows = [];
+          this.syncSelectAllState();
+        },
+      });
+  }
 
   get totalPages(): number {
     return Math.ceil(this.tableRowData.length / this.itemsPerPage);
