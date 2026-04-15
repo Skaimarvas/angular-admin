@@ -1,12 +1,14 @@
 
 import { Component } from '@angular/core';
 import { BadgeComponent } from '../../../ui/badge/badge.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-basic-table-one',
   imports: [
-    BadgeComponent
-],
+    BadgeComponent,
+    FormsModule,
+  ],
   templateUrl: './basic-table-one.component.html',
   styles: ``
 })
@@ -96,6 +98,31 @@ export class BasicTableOneComponent {
       status: 'Active',
     },
   ];
+
+  currentPage = 1;
+  readonly defaultItemsPerPage = 4;
+  itemsPerPage = this.defaultItemsPerPage;
+  pageSizeOptions = [4, 8, 12];
+
+  get totalPages(): number {
+    return Math.ceil(this.tableData.length / this.itemsPerPage);
+  }
+
+  get paginatedData() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.tableData.slice(start, start + this.itemsPerPage);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  setItemsPerPage(size: number) {
+    this.itemsPerPage = size;
+    this.currentPage = 1;
+  }
 
   getBadgeColor(status: string): 'success' | 'warning' | 'error' {
     if (status === 'Active') return 'success';

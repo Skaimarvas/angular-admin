@@ -3,14 +3,16 @@ import { Component } from '@angular/core';
 import { BadgeComponent } from '../../../ui/badge/badge.component';
 import { AvatarTextComponent } from '../../../ui/avatar/avatar-text.component';
 import { CheckboxComponent } from '../../../form/input/checkbox.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-basic-table-two',
   imports: [
     BadgeComponent,
     AvatarTextComponent,
-    CheckboxComponent
-],
+    CheckboxComponent,
+    FormsModule,
+  ],
   templateUrl: './basic-table-two.component.html',
   styles: ``
 })
@@ -61,14 +63,42 @@ export class BasicTableTwoComponent {
 
   selectedRows: string[] = [];
   selectAll: boolean = false;
+  currentPage = 1;
+  readonly defaultItemsPerPage = 5;
+  itemsPerPage = this.defaultItemsPerPage;
+  pageSizeOptions = [5, 10, 15];
+
+  get totalPages(): number {
+    return Math.ceil(this.tableRowData.length / this.itemsPerPage);
+  }
+
+  get currentItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.tableRowData.slice(start, start + this.itemsPerPage);
+  }
+
+  private syncSelectAllState() {
+    if (this.currentItems.length === 0) {
+      this.selectAll = false;
+      return;
+    }
+
+    this.selectAll = this.currentItems.every((row) => this.selectedRows.includes(row.id));
+  }
 
   handleSelectAll() {
-    this.selectAll = !this.selectAll;
-    if (this.selectAll) {
-      this.selectedRows = this.tableRowData.map(row => row.id);
+    const shouldSelectAll = !this.selectAll;
+
+    if (shouldSelectAll) {
+      const merged = [...this.selectedRows, ...this.currentItems.map((row) => row.id)];
+      this.selectedRows = [...new Set(merged)];
     } else {
-      this.selectedRows = [];
+      this.selectedRows = this.selectedRows.filter(
+        (id) => !this.currentItems.some((row) => row.id === id)
+      );
     }
+
+    this.syncSelectAllState();
   }
 
   handleRowSelect(id: string) {
@@ -77,6 +107,21 @@ export class BasicTableTwoComponent {
     } else {
       this.selectedRows = [...this.selectedRows, id];
     }
+
+    this.syncSelectAllState();
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.syncSelectAllState();
+    }
+  }
+
+  setItemsPerPage(size: number) {
+    this.itemsPerPage = size;
+    this.currentPage = 1;
+    this.syncSelectAllState();
   }
 
   getBadgeColor(type: string): 'success' | 'warning' | 'error' {

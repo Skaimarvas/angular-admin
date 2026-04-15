@@ -1,9 +1,10 @@
 
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-basic-table-five',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './basic-table-five.component.html',
   styles: ``
 })
@@ -67,6 +68,31 @@ export class BasicTableFiveComponent {
       value: '599,00',
     },
   ];
+
+  currentPage = 1;
+  readonly defaultItemsPerPage = 7;
+  itemsPerPage = this.defaultItemsPerPage;
+  pageSizeOptions = [7, 14, 21];
+
+  get totalPages(): number {
+    return Math.ceil(this.tableData.length / this.itemsPerPage);
+  }
+
+  get paginatedData() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.tableData.slice(start, start + this.itemsPerPage);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  setItemsPerPage(size: number) {
+    this.itemsPerPage = size;
+    this.currentPage = 1;
+  }
 
   handleFilter() {
     console.log('Filter clicked');
