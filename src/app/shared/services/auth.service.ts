@@ -36,6 +36,17 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  syncSessionFromStorage(): boolean {
+    const hasToken = this.hasToken();
+
+    if (!hasToken) {
+      this.currentUser.set(null);
+    }
+
+    this.isLoggedIn.set(hasToken);
+    return hasToken;
+  }
+
   login(email: string, password: string) {
     return this.http
       .post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
@@ -53,6 +64,16 @@ export class AuthService {
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
     this.router.navigate(['/signin']);
+  }
+
+  handleSessionExpired(): void {
+    localStorage.removeItem(this.tokenKey);
+    this.currentUser.set(null);
+    this.isLoggedIn.set(false);
+
+    if (this.router.url !== '/signin') {
+      this.router.navigate(['/signin']);
+    }
   }
 
   fetchMe() {

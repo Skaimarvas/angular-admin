@@ -1,126 +1,58 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { EcommerceComponent } from './pages/dashboard/ecommerce/ecommerce.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { FormElementsComponent } from './pages/forms/form-elements/form-elements.component';
-import { BasicTablesComponent } from './pages/tables/basic-tables/basic-tables.component';
-import { BlankComponent } from './pages/blank/blank.component';
-import { NotFoundComponent } from './pages/other-page/not-found/not-found.component';
 import { AppLayoutComponent } from './shared/layout/app-layout/app-layout.component';
-import { InvoicesComponent } from './pages/invoices/invoices.component';
-import { LineChartComponent } from './pages/charts/line-chart/line-chart.component';
-import { BarChartComponent } from './pages/charts/bar-chart/bar-chart.component';
-import { AlertsComponent } from './pages/ui-elements/alerts/alerts.component';
-import { AvatarElementComponent } from './pages/ui-elements/avatar-element/avatar-element.component';
-import { BadgesComponent } from './pages/ui-elements/badges/badges.component';
-import { ButtonsComponent } from './pages/ui-elements/buttons/buttons.component';
-import { ImagesComponent } from './pages/ui-elements/images/images.component';
-import { VideosComponent } from './pages/ui-elements/videos/videos.component';
 import { SignInComponent } from './pages/auth-pages/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/auth-pages/sign-up/sign-up.component';
-import { CalenderComponent } from './pages/calender/calender.component';
+import { InventoryManagementComponent } from './pages/inventory-management/inventory-management.component';
+import { SalesManagementComponent } from './pages/sales-management/sales-management.component';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
 
 export const routes: Routes = [
   {
-    path:'',
-    component:AppLayoutComponent,
+    path: 'signin',
+    component: SignInComponent,
+    title: 'Sign In',
+  },
+  {
+    path: 'signup',
+    component: SignUpComponent,
+    title: 'Sign Up',
+  },
+  {
+    path: '',
+    component: AppLayoutComponent,
     canActivate: [authGuard],
-    children:[
+    children: [
       {
         path: '',
         component: EcommerceComponent,
         pathMatch: 'full',
-        title:
-          'Angular Ecommerce Dashboard | ERP - Angular Admin Dashboard Template',
+        title: 'Dashboard',
       },
       {
-        path:'calendar',
-        component:CalenderComponent,
-        title:'Angular Calender | ERP - Angular Admin Dashboard Template'
+        path: 'inventory-management',
+        component: InventoryManagementComponent,
+        title: 'Inventory Management',
       },
       {
-        path:'profile',
-        component:ProfileComponent,
-        title:'Angular Profile Dashboard | ERP - Angular Admin Dashboard Template'
+        path: 'sales-management',
+        component: SalesManagementComponent,
+        title: 'Sales Management',
       },
       {
-        path:'form-elements',
-        component:FormElementsComponent,
-        title:'Angular Form Elements Dashboard | ERP - Angular Admin Dashboard Template'
+        path: 'user-management',
+        component: UserManagementComponent,
+        title: 'User Management',
       },
       {
-        path:'basic-tables',
-        component:BasicTablesComponent,
-        title:'Angular Basic Tables Dashboard | ERP - Angular Admin Dashboard Template'
+        path: '**',
+        redirectTo: '',
       },
-      {
-        path:'blank',
-        component:BlankComponent,
-        title:'Angular Blank Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      // support tickets
-      {
-        path:'invoice',
-        component:InvoicesComponent,
-        title:'Angular Invoice Details Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'line-chart',
-        component:LineChartComponent,
-        title:'Angular Line Chart Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'bar-chart',
-        component:BarChartComponent,
-        title:'Angular Bar Chart Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'alerts',
-        component:AlertsComponent,
-        title:'Angular Alerts Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'avatars',
-        component:AvatarElementComponent,
-        title:'Angular Avatars Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'badge',
-        component:BadgesComponent,
-        title:'Angular Badges Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'buttons',
-        component:ButtonsComponent,
-        title:'Angular Buttons Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'images',
-        component:ImagesComponent,
-        title:'Angular Images Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-      {
-        path:'videos',
-        component:VideosComponent,
-        title:'Angular Videos Dashboard | ERP - Angular Admin Dashboard Template'
-      },
-    ]
-  },
-  // auth pages
-  {
-    path:'signin',
-    component:SignInComponent,
-    title:'Angular Sign In Dashboard | ERP - Angular Admin Dashboard Template'
+    ],
   },
   {
-    path:'signup',
-    component:SignUpComponent,
-    title:'Angular Sign Up Dashboard | ERP - Angular Admin Dashboard Template'
-  },
-  // error pages
-  {
-    path:'**',
-    component:NotFoundComponent,
-    title:'Angular NotFound Dashboard | ERP - Angular Admin Dashboard Template'
+    path: '**',
+    redirectTo: 'signin',
   },
 ];
