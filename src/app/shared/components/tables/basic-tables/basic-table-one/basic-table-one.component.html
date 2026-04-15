@@ -70,33 +70,11 @@
     </table>
   </div>
 
-  <div class="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-4 dark:border-white/[0.05]">
-    <div class="flex items-center gap-2">
-      <label class="text-xs text-gray-500 dark:text-gray-400">Rows per page</label>
-      <select
-        [ngModel]="itemsPerPage"
-        (ngModelChange)="setItemsPerPage($event)"
-        class="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
-      >
-        @for (size of pageSizeOptions; track size) {
-          <option [ngValue]="size">{{ size }}</option>
-        }
-      </select>
-    </div>
-    <button
-      (click)="goToPage(currentPage - 1)"
-      [disabled]="currentPage === 1"
-      class="rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300"
-    >
-      Previous
-    </button>
-    <span class="text-xs text-gray-500 dark:text-gray-400">Page {{ currentPage }} of {{ totalPages }}</span>
-    <button
-      (click)="goToPage(currentPage + 1)"
-      [disabled]="currentPage === totalPages"
-      class="rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300"
-    >
-      Next
-    </button>
-  </div>
-</div>
+<app-pagination
+  [currentPage]="currentPage"
+  [totalPages]="totalPages"
+  [itemsPerPage]="itemsPerPage"
+  [pageSizeOptions]="pageSizeOptions"
+  (pageChange)="goToPage($event)"
+  (itemsPerPageChange)="setItemsPerPage($event)"
+/>

@@ -4,8 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { BadgeComponent } from '../../../ui/badge/badge.component';
 import { AvatarTextComponent } from '../../../ui/avatar/avatar-text.component';
 import { CheckboxComponent } from '../../../form/input/checkbox.component';
-import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../../environments/environment';
+import { PaginationComponent } from '../pagination/pagination';
+import { paginationPageSizeOptions } from '../../../../libs/pagination';
 
 type SaleRow = {
   id: number;
@@ -30,7 +31,7 @@ type SaleRow = {
     BadgeComponent,
     AvatarTextComponent,
     CheckboxComponent,
-    FormsModule,
+    PaginationComponent,
   ],
   templateUrl: './basic-table-two.component.html',
   styles: ``
@@ -48,9 +49,8 @@ export class BasicTableTwoComponent implements OnInit {
   selectedRows: string[] = [];
   selectAll: boolean = false;
   currentPage = 1;
-  readonly defaultItemsPerPage = 5;
-  itemsPerPage = this.defaultItemsPerPage;
-  pageSizeOptions = [5, 10, 15];
+  itemsPerPage = paginationPageSizeOptions[0];
+  pageSizeOptions = paginationPageSizeOptions;
 
   constructor(private http: HttpClient) {}
 

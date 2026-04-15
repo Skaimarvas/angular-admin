@@ -2,8 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { BadgeComponent } from '../../../ui/badge/badge.component';
-import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../../environments/environment';
+import { paginationPageSizeOptions } from '../../../../libs/pagination';
+import { PaginationComponent } from '../pagination/pagination';
 
 type UserRow = {
   id: number;
@@ -18,7 +19,7 @@ type UserRow = {
   selector: 'app-basic-table-one',
   imports: [
     BadgeComponent,
-    FormsModule,
+    PaginationComponent
   ],
   templateUrl: './basic-table-one.component.html',
   styles: ``
@@ -34,9 +35,8 @@ export class BasicTableOneComponent implements OnInit {
   }> = [];
 
   currentPage = 1;
-  readonly defaultItemsPerPage = 4;
-  itemsPerPage = this.defaultItemsPerPage;
-  pageSizeOptions = [4, 8, 12];
+  itemsPerPage = paginationPageSizeOptions[0];
+  pageSizeOptions = paginationPageSizeOptions;
 
   constructor(private http: HttpClient) {}
 

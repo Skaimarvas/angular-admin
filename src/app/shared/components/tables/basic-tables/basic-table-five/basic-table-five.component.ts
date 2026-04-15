@@ -1,8 +1,9 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../../environments/environment';
+import { paginationPageSizeOptions } from '../../../../libs/pagination';
+import { PaginationComponent } from '../pagination/pagination';
 
 type StockLevelRow = {
   id: number;
@@ -20,7 +21,7 @@ type StockLevelRow = {
 
 @Component({
   selector: 'app-basic-table-five',
-  imports: [FormsModule],
+  imports: [PaginationComponent],
   templateUrl: './basic-table-five.component.html',
   styles: ``
 })
@@ -35,9 +36,8 @@ export class BasicTableFiveComponent implements OnInit {
   }> = [];
 
   currentPage = 1;
-  readonly defaultItemsPerPage = 7;
-  itemsPerPage = this.defaultItemsPerPage;
-  pageSizeOptions = [7, 14, 21];
+  itemsPerPage = paginationPageSizeOptions[0];
+  pageSizeOptions = paginationPageSizeOptions;
 
   constructor(private http: HttpClient) {}
 
