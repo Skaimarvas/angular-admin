@@ -11,7 +11,7 @@ type SaleRow = {
   id: number;
   saleNumber?: string;
   saleDate?: string;
-  total?: number;
+  total?: number | string;
   status?: string;
   customer?: {
     name?: string;
@@ -54,6 +54,11 @@ export class BasicTableTwoComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
+  private toNumber(value: unknown): number {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   ngOnInit(): void {
     this.http
       .get<SaleRow[]>(`${environment.apiUrl}/sales`)
@@ -83,7 +88,7 @@ export class BasicTableTwoComponent implements OnInit {
               avatarColor: 'brand',
               product: {
                 name: row.items?.[0]?.product?.name || `${row.items?.length ?? 0} items`,
-                price: `$${(row.total ?? 0).toFixed(2)}`,
+                price: `$${this.toNumber(row.total).toFixed(2)}`,
                 purchaseDate: row.saleDate ? row.saleDate.slice(0, 10) : '-',
               },
               status: { type: mappedStatus },
