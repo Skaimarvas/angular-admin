@@ -249,6 +249,7 @@
                     <a
                       [routerLink]="nav.path"
                       routerLinkActive="menu-item-active"
+                      [routerLinkActiveOptions]="{ exact: true }"
                       class="menu-item group"
                       [ngClass]="{ 'menu-item-inactive': !isActive(nav.path) }"
                     >
@@ -476,6 +477,7 @@
                     <a
                       [routerLink]="nav.path"
                       routerLinkActive="menu-item-active"
+                      [routerLinkActiveOptions]="{ exact: true }"
                       class="menu-item group"
                       [ngClass]="{ 'menu-item-inactive': !isActive(nav.path) }"
                     >
